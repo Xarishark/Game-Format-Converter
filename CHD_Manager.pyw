@@ -12775,8 +12775,8 @@ class App:
         job.out_path, job.out_size = out, out.stat().st_size
         job.status, job.result = "Done", f"→ {out.name}"
         self.post("log", f"OK  {out}  ({fmt_size(job.zar_raw)} → {fmt_size(job.out_size)})", "ok")
-        if o["delete_src"] and verify:
-            self.remove_sources(job, o)
+        if o["delete_src"]:                                  # never recycled: the NUP lacks the package's icon and name data and its ticket
+            self.post("log", "The NSP/XCI sources were kept: a NUP doesn't hold everything the package does (its icon and name data, its ticket).", "info")
 
     def do_sw_to_folder(self, job, o):
         """Switch packages (NSP / XCI) -> the game's own files: exefs and romfs, with its newest update merged in, the folder emulators and recomps read
@@ -12825,8 +12825,8 @@ class App:
         if not ok:
             return
         self.folder_finish(job, out)
-        if o["delete_src"] and verify:                      # with verify on, every romfs was checked against the hashes the package stores
-            self.remove_sources(job, o)
+        if o["delete_src"]:                                  # never recycled: the folder lacks the package's icon and name data and its ticket
+            self.post("log", "The NSP/XCI sources were kept: a game folder doesn't hold everything the package does (its icon and name data, its ticket).", "info")
 
     def do_folder_to_nup(self, job, o):
         """A decrypted Switch game folder -> a NUP (a community container, zstd compressed, with a checksum for every file). Experimental."""
