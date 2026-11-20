@@ -8047,22 +8047,24 @@ def sw_romfs_tree(rd, base):
     dirs, fls = rd(base + dmo, dms), rd(base + fmo, fms)
     if len(dirs) < dms or len(fls) < fms:
         raise UnpackError("the game's romfs is cut short")
-    out, stack, seen, none = [], [(0, ())], set(), 0xFFFFFFFF
+    out, stack, none = [], [(0, ())], 0xFFFFFFFF
+    seen, seen_files = {0}, set()                        # every folder and file entry may be met once: a table that loops back on itself is damaged
     while stack:
         d, path = stack.pop()
-        if d in seen or d + 24 > len(dirs):
+        if d + 24 > len(dirs):
             raise UnpackError("the game's romfs has a damaged folder table")
-        seen.add(d)
         _p, _sib, child, fil, _h, _nl = struct.unpack("<6I", dirs[d:d + 24])
         while fil != none:
-            if fil + 32 > len(fls) or len(out) > 1 << 22:
+            if fil in seen_files or fil + 32 > len(fls):
                 raise UnpackError("the game's romfs has a damaged file table")
+            seen_files.add(fil)
             _p, sib, o, sz, _h, nl = struct.unpack("<IIQQII", fls[fil:fil + 32])
             out.append((path + (sw_safe_name(fls[fil + 32:fil + 32 + nl]),), base + dat + o, sz))
             fil = sib
         while child != none:
-            if child + 24 > len(dirs):
+            if child in seen or child + 24 > len(dirs):
                 raise UnpackError("the game's romfs has a damaged folder table")
+            seen.add(child)
             _p, sib, _c, _f, _h, nl = struct.unpack("<6I", dirs[child:child + 24])
             stack.append((child, path + (sw_safe_name(dirs[child + 24:child + 24 + nl]),)))
             child = sib
