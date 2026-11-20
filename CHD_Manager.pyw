@@ -13085,7 +13085,12 @@ class App:
                 k += 1
             stem = f"{stem} ({k})"
             out = out.with_name(stem)
-        if out.exists() and any(out.iterdir()):
+        if out.is_dir() and not any(out.iterdir()):           # an empty folder of that name is taken away: Windows can't move the finished folder onto it
+            try:
+                out.rmdir()
+            except OSError:
+                pass
+        if out.exists():
             if o["exists"] == "Skip":
                 job.status, job.result = "Skipped (exists)", f"{out.name} already exists (see 'If output exists' in Settings)"
                 self.post("log", f"Skipped {job.path.name}: folder {out.name} already exists.", "warn")
