@@ -1,6 +1,6 @@
 # Game Format Converter
 
-> **This is an independent fork, maintained by [Xarishark](https://github.com/Xarishark).** It adds features and fixes of its own (among them the Switch NSP/XCI unpacking to a NUP or a game folder); all changes in this fork are by Xarishark. It has no relation to the original project and is not endorsed by it, so please report problems with this fork [here](../../issues), not upstream. It is based on [Game Format Converter by Mr-Shizzy](https://github.com/Mr-Shizzy/Game-Format-Converter), used under the GPL; see [Credits and license](#credits-and-license).
+> **This is an independent fork, maintained by [Xarishark](https://github.com/Xarishark).** It adds features and fixes of its own (see [What this fork adds](#what-this-fork-adds)); all changes in this fork are by Xarishark. It has no relation to the original project and is not endorsed by it, so please report problems with this fork [here](../../issues), not upstream. It is based on [Game Format Converter by Mr-Shizzy](https://github.com/Mr-Shizzy/Game-Format-Converter), used under the GPL; see [Credits and license](#credits-and-license).
 
 **Formerly CHD Manager.** It was renamed in 2.1.0 because it now converts far more than CHDs. If you have an older CHD Manager, see [Coming from CHD Manager?](#coming-from-chd-manager).
 
@@ -25,13 +25,25 @@ It is portable: one folder, nothing installed. CHD conversions are done by `chdm
 
 </details>
 
+## What this fork adds
+
+Everything in this section is by Xarishark and is not in the original project. The Switch unpacking needs your own `prod.keys`; no keys are included or downloaded.
+
+- **Switch games to a game folder:** the game's `exefs` and `romfs` with its newest update merged in, and its DLC in folders of its own beside it. This is the layout emulators and static recompilations read; PrimeRecomp, for one, only takes this.
+- **Switch games to NUP (experimental):** the base game, its newest update merged into the game's files, and its DLC, in one file. A file that is the same in the game and in its update is stored once. NUP works for Switch 1 games too, not only Switch 2.
+- **Games stored compressed inside the package** (Echoes of Wisdom, Mario Party Jamboree and others) unpack fully, and every block is checked against the hashes the package stores.
+- **Collections** such as Super Mario 3D All-Stars come out with each program in its own folder.
+- **Games that keep part of their files in another package** (a sparse layout) are refused with a plain explanation, instead of giving a broken result.
+- **Fixes:** a damaged romfs whose folder or file table loops back on itself no longer makes the program run forever. An empty folder that already has the output's name no longer makes the last step fail on Windows; this also fixes PS3 package and Switch split folder outputs. After a NUP or a game folder, the original Switch game file is never sent to the Recycle Bin, because neither output holds its icon and name data or its ticket.
+- **Updates come from this fork:** the built-in updater checks this repository's releases, not the original's.
+
 ## What's new in 2.1.0
 
 - **A new name:** CHD Manager is now Game Format Converter.
 - **Xbox 360:** ZAR (for Xenia), ISO and game folders, in every direction that makes sense. Xbox 360 download packages (the hex-named single files, such as Xbox Live Arcade and Games on Demand) are not discs, so they are refused with a plain explanation.
 - **Original Xbox:** a full 7.8 GB dump becomes a trimmed `.xiso.iso` that holds just the game; also game folders and CHD.
 - **PlayStation 3:** game folder to ISO and back, multiMAN split pieces joined, and `.pkg` packages unpacked and packed (with RPCS3 or with your own key; see [Keys](#keys-and-what-the-program-does-not-contain)).
-- **Nintendo Switch:** NSP to XCI and back, a bundle of base game + newest update + DLC into one file, one NSP per title, swapping in a newer update, and a firmware safeguard that tells you when your keys are older than the game. **NUP (Switch and Switch 2, experimental):** a decrypted game folder to NUP and back, and an NSP or XCI to NUP (the game, its newest update merged into the game's files, and its DLC, unpacked with your own keys).
+- **Nintendo Switch:** NSP to XCI and back, a bundle of base game + newest update + DLC into one file, one NSP per title, swapping in a newer update, and a firmware safeguard that tells you when your keys are older than the game. **Switch 2:** folder to NUP and back (experimental).
 - **Nintendo 3DS:** compress `.3ds`/`.cci`/`.cxi`/`.3dsx` for the Azahar emulator and unpack them again; make a CIA from a decrypted `.3ds`; make a `.3ds` from a decrypted CIA. Nothing is ever decrypted.
 - **PSP:** CSO version 2 (real PSP only), plus an option that leaves out the useless firmware update (the `UPDATE` folder) when compressing.
 - **PlayStation 2 VCD** (POPStarter), **M3U playlists** for multi-disc games, **Linux** support, a **right-click menu** in Windows and Linux file managers, a **log file** and a one-click **support report**, and plain-English windows that say why a file was refused.
