@@ -546,10 +546,10 @@ def delete_forever(paths):
 
 
 # ------------------------------------------------- Game Format Converter's own updates (GitHub releases)
-APP_REPO = "Mr-Shizzy/Game-Format-Converter"
+APP_REPO = "Xarishark/Game-Format-Converter"              # this fork's own releases (it carries the Switch unpacking that the original repo left out)
 APP_RELEASE_API = f"https://api.github.com/repos/{APP_REPO}/releases/latest"
 APP_URL_PREFIX = f"https://github.com/{APP_REPO}/"
-APP_OWNER_PREFIX = "https://github.com/Mr-Shizzy/"        # a renamed repo keeps this owner: its downloads are still trusted (and still need the checksum)
+APP_OWNER_PREFIX = "https://github.com/Xarishark/"        # a renamed repo keeps this owner: its downloads are still trusted (and still need the checksum)
 SWAP_BAT = """@echo off
 setlocal
 set "NEW={new}"
@@ -610,8 +610,13 @@ def parse_app_release(data, kind):
 
 def fetch_app_release():
     """Latest Game Format Converter release -> dict(tag, name, url, size, sha, page, notes, kind)."""
-    with http_get(APP_RELEASE_API) as r:
-        data = json.loads(r.read().decode("utf-8"))
+    try:
+        with http_get(APP_RELEASE_API) as r:
+            data = json.loads(r.read().decode("utf-8"))
+    except urllib.error.HTTPError as e:
+        if e.code == 404:                                   # GitHub's answer for a repo with no release yet
+            raise RuntimeError(f"no release has been published on github.com/{APP_REPO} yet") from None
+        raise
     return parse_app_release(data, app_asset_kind())
 
 
