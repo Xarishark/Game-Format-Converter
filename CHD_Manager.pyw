@@ -567,7 +567,7 @@ def delete_forever(paths):
 
 
 # ------------------------------------------------- Game Format Converter's own updates (GitHub releases)
-APP_REPO = "Xarishark/Game-Format-Converter"              # this fork's own releases (it carries the Switch unpacking that the original repo left out)
+APP_REPO = "Xarishark/Game-Format-Converter-Enhanced"            # this fork's own releases (it carries the Switch unpacking that the original repo left out)
 APP_RELEASE_API = f"https://api.github.com/repos/{APP_REPO}/releases/latest"
 APP_URL_PREFIX = f"https://github.com/{APP_REPO}/"
 APP_OWNER_PREFIX = "https://github.com/Xarishark/"        # a renamed repo keeps this owner: its downloads are still trusted (and still need the checksum)
