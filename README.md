@@ -30,7 +30,7 @@ It is portable: one folder, nothing installed. CHD conversions are done by `chdm
 Everything in this section is by Xarishark and is not in the original project. The Switch unpacking needs your own `keys`; no keys are included or downloaded.
 
 - **Switch games to a game folder:** the game's `exefs` and `romfs` with its newest update merged in, and its DLC in folders of its own beside it. This is the layout emulators and static recompilations read; PrimeRecomp, for one, only takes this.
-- **Switch games to NUP (experimental):** the base game, its newest update merged into the game's files, and its DLC, in one file. A file that is the same in the game and in its update is stored once. NUP works for Switch 1 games too, not only Switch 2.
+- **Switch games to NUP (experimental):** the base game, its newest update merged into the game's files, and its DLC, in one file. A file that is the same in the game and in its update is stored once. NUP works for Switch 1 games too, not only Switch 2. **NUP, uncompressed** stores every file as it is, so a program can read any part of a file straight from the NUP without unpacking it first; the file is bigger.
 - **Games stored compressed inside the package** (Echoes of Wisdom, Mario Party Jamboree and others) unpack fully, and every block is checked against the hashes the package stores.
 - **Collections** such as Super Mario 3D All-Stars come out with each program in its own folder.
 - **Games that keep part of their files in another package** (a sparse layout) are refused with a plain explanation, instead of giving a broken result.
@@ -88,7 +88,7 @@ Each file in the list has an **Action** drop-down; it only offers what can work 
 | **PS3: ISO, game folder, split pieces** | Folder to ISO and back; `.iso.0`/`.66600` pieces are joined | yes | yes |
 | **PS3: `.pkg`** | Unpacked to a game folder; a game folder packed into a package | yes | yes |
 | **Switch: NSP, XCI** | Package to cartridge image and back; one NSP per title; bundles with the newest update and DLC; unpacked to a game folder (`exefs` and `romfs`, the newest update merged in, DLC beside it) for emulators and recomps | yes | yes |
-| **Switch / Switch 2: NUP** | Game folder (base, updates, DLC) to NUP and back; an NSP or XCI to NUP (the base game, the newest update merged into it, and DLC; needs your `keys`; files that are the same in the game and its update are stored once). Experimental | yes | yes |
+| **Switch / Switch 2: NUP** | Game folder (base, updates, DLC) to NUP and back; an NSP or XCI to NUP (the base game, the newest update merged into it, and DLC; needs your `keys`; files that are the same in the game and its update are stored once). Compressed (zstd) or uncompressed. Experimental | yes | yes |
 | **3DS: `.zcci`, `.zcxi`, `.z3dsx`** | Azahar's compressed 3DS files | yes | yes |
 | **3DS: `.3ds`/`.cci`, `.cia`** | Cartridge dump to CIA, and CIA back to a `.3ds`, for decrypted games | yes | yes |
 | **N64: `.z64`, `.v64`, `.n64`** | The same ROM in its three byte orders; only reordered, nothing else changes. Also a check of the ROM's header checksums | yes | yes |
