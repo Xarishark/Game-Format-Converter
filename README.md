@@ -27,7 +27,7 @@ It is portable: one folder, nothing installed. CHD conversions are done by `chdm
 
 ## What this fork adds
 
-Everything in this section is by Xarishark and is not in the original project. The Switch unpacking needs your own `prod.keys`; no keys are included or downloaded.
+Everything in this section is by Xarishark and is not in the original project. The Switch unpacking needs your own `keys`; no keys are included or downloaded.
 
 - **Switch games to a game folder:** the game's `exefs` and `romfs` with its newest update merged in, and its DLC in folders of its own beside it. This is the layout emulators and static recompilations read; PrimeRecomp, for one, only takes this.
 - **Switch games to NUP (experimental):** the base game, its newest update merged into the game's files, and its DLC, in one file. A file that is the same in the game and in its update is stored once. NUP works for Switch 1 games too, not only Switch 2.
@@ -88,7 +88,7 @@ Each file in the list has an **Action** drop-down; it only offers what can work 
 | **PS3: ISO, game folder, split pieces** | Folder to ISO and back; `.iso.0`/`.66600` pieces are joined | yes | yes |
 | **PS3: `.pkg`** | Unpacked to a game folder; a game folder packed into a package | yes | yes |
 | **Switch: NSP, XCI** | Package to cartridge image and back; one NSP per title; bundles with the newest update and DLC; unpacked to a game folder (`exefs` and `romfs`, the newest update merged in, DLC beside it) for emulators and recomps | yes | yes |
-| **Switch / Switch 2: NUP** | Game folder (base, updates, DLC) to NUP and back; an NSP or XCI to NUP (the base game, the newest update merged into it, and DLC; needs your `prod.keys`; files that are the same in the game and its update are stored once). Experimental | yes | yes |
+| **Switch / Switch 2: NUP** | Game folder (base, updates, DLC) to NUP and back; an NSP or XCI to NUP (the base game, the newest update merged into it, and DLC; needs your `keys`; files that are the same in the game and its update are stored once). Experimental | yes | yes |
 | **3DS: `.zcci`, `.zcxi`, `.z3dsx`** | Azahar's compressed 3DS files | yes | yes |
 | **3DS: `.3ds`/`.cci`, `.cia`** | Cartridge dump to CIA, and CIA back to a `.3ds`, for decrypted games | yes | yes |
 | **N64: `.z64`, `.v64`, `.n64`** | The same ROM in its three byte orders; only reordered, nothing else changes. Also a check of the ROM's header checksums | yes | yes |
@@ -165,8 +165,8 @@ The program contains **no keys, no firmware, no BIOS files, no games and no decr
 
 - **Wii discs to RVZ/WIA/WBFS:** your own copy of Dolphin (the program runs its `DolphinTool.exe`) or your own Wii key (a text file in the `keys` folder, or pasted in the setup window).
 - **PlayStation 3 packages (`.pkg`):** point *Settings, Formats, PlayStation 3* at your own `rpcs3.exe`, or paste your own package key.
-- **Switch packages that carry a ticket:** your own `prod.keys` (choose the file or paste it). Games without a ticket, and XCI to NSP, need no keys.
-- **Switch games to a NUP or a game folder:** always your own `prod.keys`, ticket or not, because every Switch game's files are encrypted.
+- **Switch packages that carry a ticket:** your own `keys` (choose the file or paste it). Games without a ticket, and XCI to NSP, need no keys.
+- **Switch games to a NUP or a game folder:** always your own `keys`, ticket or not, because every Switch game's files are encrypted.
 - **Nintendo 3DS:** nothing is decrypted. A `.3ds` or CIA must already be decrypted, and the program refuses encrypted ones and says so. Nothing from Nintendo, including certificates, is embedded in the files it builds.
 
 The program stores the keys you give it in `chd_manager_settings.json` next to it, so **don't share that file**. It is never part of the release zip.
@@ -248,7 +248,7 @@ Everything below was run on Windows 11 with chdman 0.289 unless it says otherwis
 | PS3 ISO to folder | RPCS3 | Plays |
 | Switch NSP with a ticket to XCI; XCI to NSP (a base game with an update and seven DLC); the same game split into nine NSPs and joined into an XCI again | An emulator | Worked: the update and all seven DLC were active in the game that had them |
 | Switch 2 folder to NUP (base + update, a 6.5 GB game) | Eglantine, a Switch 2 emulator build | Loaded and played |
-| Switch NSP with a ticket to NUP (four base games, the largest 7.2 GB with 4,678 files) | None: read back and checked only | Unpacked with prod.keys, every file read back against its checksum; the files look right (a GBA ROM header and the exefs `NSO0` mark) |
+| Switch NSP with a ticket to NUP (four base games, the largest 7.2 GB with 4,678 files) | None: read back and checked only | Unpacked with keys, every file read back against its checksum; the files look right (a GBA ROM header and the exefs `NSO0` mark) |
 | Switch NSP + its update NSP (+ DLC) to NUP (three games: updates of 25 MB, 160 MB and 454 MB; one with two DLC) | None: checked against the hashes stored in the files | The update's patch is merged into the game's files and the result matches every checksum stored in the update; the game's and the DLC's files match theirs; the NUP reads back; an update for the wrong game is refused |
 | Switch NSP to game folder (`exefs` and `romfs`): Metroid Prime Remastered 1.0.0 | PrimeRecomp 0.0.11, a static recompilation that only takes the extracted folder | Its setup recompiled the game from the folder (172 s); the game started, served all 341 `romfs` files, built the 1,016 shaders it ships with and played its intro video at 60 fps |
 | N64: `.n64`-named files that are really in `.v64` order, converted to `.z64` (Army Men: Sarge's Heroes, Turok: Rage Wars) | Rosalie's Mupen GUI 0.9.1 | Both play |
