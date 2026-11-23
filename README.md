@@ -36,6 +36,7 @@ Everything in this section is by Xarishark and is not in the original project. T
 - **Games that keep part of their files in another package** (a sparse layout) are refused with a plain explanation, instead of giving a broken result.
 - **Fixes:** a damaged romfs whose folder or file table loops back on itself no longer makes the program run forever. An empty folder that already has the output's name no longer makes the last step fail on Windows; this also fixes PS3 package and Switch split folder outputs. After a NUP or a game folder, the original Switch game file is never sent to the Recycle Bin, because neither output holds its icon and name data or its ticket.
 - **Updates come from this fork:** the built-in updater checks this repository's releases, not the original's.
+- **Version numbers follow the original's:** this fork's 2.1.1 is the original's 2.1.1 with everything above added. A release of this fork's own between two of the original's gets a fourth number (2.1.1.1), and the original's next version (2.1.2) still counts as newer, so the updater offers it.
 
 ## What's new in 2.1.1
 

@@ -571,9 +571,11 @@ start "" "%OLD%"
 
 
 def ver_tuple(s):
-    """'v1.2.0' / '1.2' -> (1, 2, 0)"""
-    nums = [int(x) for x in re.findall(r"\d+", s or "")][:3]
-    return tuple(nums + [0] * (3 - len(nums)))
+    """'v1.2.0' / '1.2' -> (1, 2, 0). A 4th number (this fork's own fix release on top of an upstream version, '2.1.1.1') is kept when it isn't 0,
+    so 2.1.1 < 2.1.1.1 < 2.1.2 and a plain version still reads as three numbers."""
+    nums = [int(x) for x in re.findall(r"\d+", s or "")][:4]
+    nums += [0] * (3 - len(nums))
+    return tuple(nums[:3] if len(nums) < 4 or not nums[3] else nums)
 
 
 def app_asset_kind():
