@@ -1,7 +1,7 @@
 <#
   Builds the portable release:  dist\Game Format Converter Enhanced\  (Game Format Converter Enhanced.exe + chdman.exe + gameInfo.db + licenses)
-  a zip of it:                  dist\Game-Format-Converter-<version>-win64.zip
-  and the source zip:           dist\Game-Format-Converter-<version>-source.zip   (CHD_Manager.pyw + chd-manager.sh + licenses + README)
+  a zip of it:                  dist\Game-Format-Converter-Enhanced-<version>-win64.zip
+  and the source zip:           dist\Game-Format-Converter-Enhanced-<version>-source.zip   (CHD_Manager.pyw + chd-manager.sh + licenses + README)
 
   Needs:  Python 3 with tkinter (tested with 3.12; the python.org install has it) and
           7-Zip (only to unpack MAME's download).  Nothing else is installed except the pip
