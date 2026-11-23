@@ -1,9 +1,9 @@
 THIRD-PARTY NOTICES
 
-Game Format Converter is free software under the GNU General Public
+Game Format Converter Enhanced is free software under the GNU General Public
 License, version 3 or (at your option) any later version (see LICENSE). That choice
 follows from the GameCube/Wii code below, which is a Python port of GPL-licensed code.
-The release build of Game Format Converter.exe and the chdman.exe and gameInfo.db that ship
+The release build of Game Format Converter Enhanced.exe and the chdman.exe and gameInfo.db that ship
 with it contain or consist of third-party software. Their licenses are reproduced below,
 as those licenses require.
 
@@ -402,9 +402,9 @@ freely, subject to the following restrictions:
 
 
 ==============================================================================
-2. Python  (bundled in Game Format Converter.exe)
+2. Python  (bundled in Game Format Converter Enhanced.exe)
 ==============================================================================
-The release Game Format Converter.exe embeds the Python runtime. Python is licensed under the
+The release Game Format Converter Enhanced.exe embeds the Python runtime. Python is licensed under the
 Python Software Foundation License; the license text follows.
 
 A. HISTORY OF THE SOFTWARE
@@ -1112,7 +1112,7 @@ docs/license.html_lib.
 
 
 ==============================================================================
-3. Tcl/Tk  (bundled in Game Format Converter.exe, provides the window toolkit)
+3. Tcl/Tk  (bundled in Game Format Converter Enhanced.exe, provides the window toolkit)
 ==============================================================================
 This software is copyrighted by the Regents of the University of
 California, Sun Microsystems, Inc., Scriptics Corporation, ActiveState
@@ -1159,7 +1159,7 @@ terms specified in this license.
 ==============================================================================
 4. PyInstaller  (used to build the exe)
 ==============================================================================
-Game Format Converter.exe is packaged with PyInstaller (https://pyinstaller.org). PyInstaller's
+Game Format Converter Enhanced.exe is packaged with PyInstaller (https://pyinstaller.org). PyInstaller's
 bootloader is GPL-2.0-or-later with a special exception that permits distributing
 the bundled program under any license.
 
@@ -1208,12 +1208,12 @@ code from libMirage, mdf2iso, nrg2iso, ccd2iso, cdirip or similar GPL tools was 
 
 
 ==============================================================================
-6. iPoPS BASE.PBP and DATA.PSP  (optional download, NOT included in Game Format Converter)
+6. iPoPS BASE.PBP and DATA.PSP  (optional download, NOT included in Game Format Converter Enhanced)
 ==============================================================================
-To make PBP files that run on a real PSP, Game Format Converter can - only if the user agrees -
+To make PBP files that run on a real PSP, Game Format Converter Enhanced can - only if the user agrees -
 download two small files, BASE.PBP and DATA.PSP, from the public repository
 https://github.com/julianxhokaxhiu/iPoPS (MIT license, pinned to one commit and
-checked against fixed SHA-256 checksums). They are not part of Game Format Converter, are not in
+checked against fixed SHA-256 checksums). They are not part of Game Format Converter Enhanced, are not in
 its repository or release, and are used only to copy the PS1 loader, icon and boot
 logo into the PBP files the user makes. Their contents may be subject to the rights of
 their original authors; the user is responsible for choosing to download them.
@@ -1229,7 +1229,7 @@ emulator (https://github.com/dolphin-emu/dolphin), re-written here in Python. Do
 source files carry "SPDX-License-Identifier: GPL-2.0-or-later"; Copyright (c) the Dolphin
 Emulator Project and its contributors. This is the reason this program is GPL.
 
-Game Format Converter contains no Wii common key and never downloads one. Turning a Wii disc
+Game Format Converter Enhanced contains no Wii common key and never downloads one. Turning a Wii disc
 into RVZ, WIA or WBFS needs either the user's own key (a keys folder next to the program,
 or pasted in Settings) or the user's own copy of Dolphin's DolphinTool.exe, which this
 program only runs; it does not include or copy it. Dolphin is not affiliated with this
@@ -1250,7 +1250,7 @@ error correction (EDC and ECC) uses the standard CD-ROM definitions (ECMA-130).
 
 
 ==============================================================================
-9. zstandard  (Python package, bundled in Game Format Converter.exe; used for RVZ and ZSTD)
+9. zstandard  (Python package, bundled in Game Format Converter Enhanced.exe; used for RVZ and ZSTD)
 ==============================================================================
 The zstandard package (https://github.com/indygreg/python-zstandard) and the Zstandard
 library inside it (https://github.com/facebook/zstd, Copyright (c) Meta Platforms, Inc.
@@ -1303,7 +1303,7 @@ similar tools was used.
 ==============================================================================
 Version 2.1.0 added the formats below. Each reader and writer was written for this
 project from the format's public description and from reading the open-source
-projects listed. No source code of these projects is included in Game Format Converter, and
+projects listed. No source code of these projects is included in Game Format Converter Enhanced, and
 no file from them is distributed with it. They are listed because their authors'
 work made the formats understandable.
 
@@ -1317,7 +1317,7 @@ work made the formats understandable.
   nup specification (a55uka)         the NUP package format (its page lists MIT)
   Azahar (GPL-3.0)                   Nintendo 3DS compressed files (.zcci, .zcxi,
                                      .z3dsx): the layout was read from its source;
-                                     Game Format Converter has its own reader and writer
+                                     Game Format Converter Enhanced has its own reader and writer
   3dsconv (ihaveamac, MIT)           Nintendo 3DS CIA layout, used to cross-check
                                      the CIA files this program writes. One small
                                      standard block of data (the 172-byte content
