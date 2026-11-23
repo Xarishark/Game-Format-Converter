@@ -1,6 +1,6 @@
 # Game Format Converter Enhanced
 
-> **This is an independent fork, maintained by [Xarishark](https://github.com/Xarishark).** It is called **Game Format Converter Enhanced** so it isn't mistaken for the original program (the files and the .exe keep the original name, so existing installs and updates keep working). It adds features and fixes of its own (see [What this fork adds](#what-this-fork-adds)); all changes in this fork are by Xarishark. It has no relation to the original project and is not endorsed by it, so please report problems with this fork [here](../../issues), not upstream. It is based on [Game Format Converter by Mr-Shizzy](https://github.com/Mr-Shizzy/Game-Format-Converter), used under the GPL; see [Credits and license](#credits-and-license).
+> **This is an independent fork, maintained by [Xarishark](https://github.com/Xarishark).** It is called **Game Format Converter Enhanced** so it isn't mistaken for the original program (an older copy that updates itself keeps its old file name, and both names keep working). It adds features and fixes of its own (see [What this fork adds](#what-this-fork-adds)); all changes in this fork are by Xarishark. It has no relation to the original project and is not endorsed by it, so please report problems with this fork [here](../../issues), not upstream. It is based on [Game Format Converter by Mr-Shizzy](https://github.com/Mr-Shizzy/Game-Format-Converter), used under the GPL; see [Credits and license](#credits-and-license).
 
 **Formerly CHD Manager.** It was renamed in 2.1.0 because it now converts far more than CHDs. If you have an older CHD Manager, see [Coming from CHD Manager?](#coming-from-chd-manager).
 
@@ -135,8 +135,8 @@ How it was checked: CHD, CSO and ZSO were taken from ISO and back to ISO on made
 
 ### Windows
 
-1. Get `Game-Format-Converter-<version>-win64.zip` from the [Releases](../../releases) page and unzip it anywhere.
-2. Run **Game Format Converter.exe**.
+1. Get `Game-Format-Converter-Enhanced-<version>-win64.zip` from the [Releases](../../releases) page and unzip it anywhere.
+2. Run **Game Format Converter Enhanced.exe**.
 3. Click **Add Files** or **Add Folder** (or drag them in), check the Action column, and press **Start**.
 
 Windows 10/11, 64-bit. Python is not needed. Settings are saved in `chd_manager_settings.json` next to the exe.
@@ -147,7 +147,7 @@ Windows 10/11, 64-bit. Python is not needed. Settings are saved in `chd_manager_
 
 ### Linux (experimental)
 
-Download `Game-Format-Converter-<version>-source.zip`, unzip it, and run `./chd-manager.sh`. It needs `python3` with tkinter and a `chdman` (for example the `mame-tools` package); if something is missing the launcher says what, why, and the exact command, and asks before running anything. Optional: `tkdnd` for drag and drop, `python3-zstandard` for RVZ, ZSO, ZAR, NUP and the 3DS compressed formats. The Windows-only parts are replaced or switched off (your desktop's trash instead of the Recycle Bin, no chdman updater). Settings, the log and the right-click menu (a KDE Dolphin service menu, GNOME Files scripts and an "Open with" entry, all inside your own `~/.local/share`) work on Linux; see *More, What to install (and why)* in the app.
+Download `Game-Format-Converter-Enhanced-<version>-source.zip`, unzip it, and run `./chd-manager.sh`. It needs `python3` with tkinter and a `chdman` (for example the `mame-tools` package); if something is missing the launcher says what, why, and the exact command, and asks before running anything. Optional: `tkdnd` for drag and drop, `python3-zstandard` for RVZ, ZSO, ZAR, NUP and the 3DS compressed formats. The Windows-only parts are replaced or switched off (your desktop's trash instead of the Recycle Bin, no chdman updater). Settings, the log and the right-click menu (a KDE Dolphin service menu, GNOME Files scripts and an "Open with" entry, all inside your own `~/.local/share`) work on Linux; see *More, What to install (and why)* in the app.
 
 I could only test Linux on Ubuntu 24.04 under WSL2. It has **not** been tried on a Steam Deck, on macOS, or in a real Dolphin, GNOME Files or Thunar right-click menu. Treat it as experimental and please report what you find.
 
@@ -216,7 +216,7 @@ Needs Python 3 (tested with 3.12) and 7-Zip.
 powershell -ExecutionPolicy Bypass -File build.ps1
 ```
 
-This installs PyInstaller and zstandard, downloads the latest official chdman and the game list (checking the SHA-256 of both), builds `Game Format Converter.exe`, and writes the portable folder, the Windows zip and the source zip to `dist/`. Use `-ChdmanPath` to supply your own chdman.
+This installs PyInstaller and zstandard, downloads the latest official chdman and the game list (checking the SHA-256 of both), builds `Game Format Converter Enhanced.exe`, and writes the portable folder, the Windows zip and the source zip to `dist/`. Use `-ChdmanPath` to supply your own chdman.
 
 ## Testing
 

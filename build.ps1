@@ -1,5 +1,5 @@
 <#
-  Builds the portable release:  dist\Game Format Converter\  (Game Format Converter.exe + chdman.exe + gameInfo.db + licenses)
+  Builds the portable release:  dist\Game Format Converter Enhanced\  (Game Format Converter Enhanced.exe + chdman.exe + gameInfo.db + licenses)
   a zip of it:                  dist\Game-Format-Converter-<version>-win64.zip
   and the source zip:           dist\Game-Format-Converter-<version>-source.zip   (CHD_Manager.pyw + chd-manager.sh + licenses + README)
 
@@ -87,26 +87,26 @@ if (-not ((Test-Path $gameDb) -and ((Get-FileHash $gameDb -Algorithm SHA256).Has
 
 # ---- 4. exe
 Write-Host "Building the exe..."
-& python -m PyInstaller --noconfirm --clean --onefile --windowed --name "Game Format Converter" `
+& python -m PyInstaller --noconfirm --clean --onefile --windowed --name "Game Format Converter Enhanced" `
     --icon "$root\assets\icon.ico" --add-data "${chdman};." --hidden-import zstandard --hidden-import zstandard.backend_c `
     --distpath "$root\build\exe" --workpath "$root\build\work" --specpath "$root\build" "$root\CHD_Manager.pyw"
-if ($LASTEXITCODE -ne 0 -or -not (Test-Path "$root\build\exe\Game Format Converter.exe")) { Fail "PyInstaller failed." }
+if ($LASTEXITCODE -ne 0 -or -not (Test-Path "$root\build\exe\Game Format Converter Enhanced.exe")) { Fail "PyInstaller failed." }
 
 # ---- 5. portable folder + zip
 $ver = (Select-String -Path "$root\CHD_Manager.pyw" -Pattern '^APP_VER\s*=\s*"([^"]+)"').Matches[0].Groups[1].Value
-$out = "$root\dist\Game Format Converter"
+$out = "$root\dist\Game Format Converter Enhanced"
 Remove-Item "$root\dist" -Recurse -Force -ErrorAction SilentlyContinue
 New-Item -ItemType Directory -Force $out | Out-Null
-Copy-Item "$root\build\exe\Game Format Converter.exe" $out
+Copy-Item "$root\build\exe\Game Format Converter Enhanced.exe" $out
 Copy-Item $chdman "$out\chdman.exe"
 Copy-Item $gameDb "$out\gameInfo.db"
 Copy-Item "$root\LICENSE", "$root\THIRD_PARTY_NOTICES.txt", "$root\README.md", "$root\chdm.cmd" $out
-$zip = "$root\dist\Game-Format-Converter-$ver-win64.zip"
+$zip = "$root\dist\Game-Format-Converter-Enhanced-$ver-win64.zip"
 Compress-Archive -Path $out -DestinationPath $zip -Force
 
 # ---- 6. source zip (Linux/macOS, and anyone who would rather not run the exe). Python's zipfile is used because
 #         Compress-Archive can't mark chd-manager.sh as executable. The in-app updater on those systems reads this zip.
-$srcZip = "$root\dist\Game-Format-Converter-$ver-source.zip"
+$srcZip = "$root\dist\Game-Format-Converter-Enhanced-$ver-source.zip"
 $srcPy = @'
 import sys, zipfile, os
 root, dest = sys.argv[1], sys.argv[2]
@@ -116,7 +116,7 @@ with zipfile.ZipFile(dest, "w", zipfile.ZIP_DEFLATED) as z:
         data = open(os.path.join(root, name), "rb").read()
         if name.endswith(".sh"):
             data = data.replace(b"\r\n", b"\n")
-        zi = zipfile.ZipInfo("Game-Format-Converter/" + name, date_time=(2026, 1, 1, 0, 0, 0))
+        zi = zipfile.ZipInfo("Game-Format-Converter-Enhanced/" + name, date_time=(2026, 1, 1, 0, 0, 0))
         zi.compress_type = zipfile.ZIP_DEFLATED
         zi.external_attr = ((0o755 if name.endswith(".sh") else 0o644) | 0o100000) << 16
         z.writestr(zi, data)

@@ -624,7 +624,7 @@ def fetch_app_release():
 
 def stage_app_update(info, dest_dir, progress=None):
     """Download the release zip, verify its SHA-256, and save the new exe next to the current one as
-    'Game Format Converter.new.exe'. Returns that path. Refuses anything without a matching checksum."""
+    'Game Format Converter Enhanced.new.exe'. Returns that path. Refuses anything without a matching checksum."""
     import zipfile
     if not info["url"].startswith(APP_OWNER_PREFIX):
         raise RuntimeError("Unexpected download address.")
@@ -648,14 +648,14 @@ def stage_app_update(info, dest_dir, progress=None):
             raise RuntimeError("Checksum mismatch - the download was discarded.")
         with zipfile.ZipFile(zpath) as z:
             names = {Path(n).name: n for n in z.namelist() if not n.endswith("/")}
-            exe_name = next((n for n in ("Game Format Converter.exe", "CHD Manager.exe") if n in names), None)     # (the old name is still accepted)
+            exe_name = next((n for n in ("Game Format Converter Enhanced.exe", "Game Format Converter.exe", "CHD Manager.exe") if n in names), None)     # (the older names are still accepted)
             if not exe_name:
-                raise RuntimeError("The zip does not contain Game Format Converter.exe.")
+                raise RuntimeError("The zip does not contain Game Format Converter Enhanced.exe.")
             exe_bytes = z.read(names[exe_name])
             extras = {n: z.read(names[n]) for n in ("LICENSE", "THIRD_PARTY_NOTICES.txt") if n in names}
         if exe_bytes[:2] != b"MZ":
             raise RuntimeError(f"{exe_name} in the zip is not a Windows program.")
-        new = dest_dir / "Game Format Converter.new.exe"
+        new = dest_dir / "Game Format Converter Enhanced.new.exe"
         new.write_bytes(exe_bytes)
         for n, b in extras.items():
             (dest_dir / n).write_bytes(b)
