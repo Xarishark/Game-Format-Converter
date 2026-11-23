@@ -9787,16 +9787,17 @@ def linux_program():
     return [str(sh)] if sh.is_file() else [sys.executable, str(here)]
 
 
-LINUX_SCRIPT_CONVERT = "Game Format Converter - Convert"
-LINUX_SCRIPT_ADD = "Game Format Converter - Add to list"
-LINUX_OLD_SCRIPTS = ("CHD Manager - Convert", "CHD Manager - Add to list")          # what versions before 2.1 called them: removed so the menu has no doubles
+LINUX_SCRIPT_CONVERT = "Game Format Converter Enhanced - Convert"
+LINUX_SCRIPT_ADD = "Game Format Converter Enhanced - Add to list"
+LINUX_OLD_SCRIPTS = ("CHD Manager - Convert", "CHD Manager - Add to list",       # what versions before 2.1 called them, and the names before this fork was renamed:
+                     "Game Format Converter - Convert", "Game Format Converter - Add to list")   # removed so the menu has no doubles
 LINUX_OLD_MENU = "chd-manager.desktop"                                                # 2.1.0 had one Dolphin menu file with every conversion for every file; now one file per group (chd-manager-<group>.desktop)
 UCA_PREFIX = "gfc-"                                                                   # every Thunar action this program writes has an id that starts like this: how it finds its own again among yours
-UCA_SUBMENU = "Game Format Converter"
+UCA_SUBMENU = "Game Format Converter Enhanced"
 UCA_BEGIN = "<!-- Game Format Converter: begin (the program adds and removes this block; the rest of the file is left as it is) -->"
 UCA_END = "<!-- Game Format Converter: end -->"
-NEMO_ACTIONS = (("chd-manager-convert", "Convert with Game Format Converter", "Convert this folder with Game Format Converter", "--start"),
-                ("chd-manager-add", "Add to the Game Format Converter list", "Add this folder to the Game Format Converter list", ""))
+NEMO_ACTIONS = (("chd-manager-convert", "Convert with Game Format Converter Enhanced", "Convert this folder with Game Format Converter Enhanced", "--start"),
+                ("chd-manager-add", "Add to the Game Format Converter Enhanced list", "Add this folder to the Game Format Converter Enhanced list", ""))
 
 
 def linux_config_home():
@@ -9841,14 +9842,14 @@ def linux_menu_files(prog=None, data=None, config=None):
     allm = list(dict.fromkeys([m for g in groups for m in g[2]] + [g[4] for g in groups if g[4]]))
     files = {}
     files[data / "applications" / "chd-manager.desktop"] = (
-        "[Desktop Entry]\nType=Application\nName=Game Format Converter\nComment=Convert game images and files between formats\n"
+        "[Desktop Entry]\nType=Application\nName=Game Format Converter Enhanced\nComment=Convert game images and files between formats\n"
         f"Exec={ex} %F\nTerminal=false\nCategories=Utility;\nMimeType={';'.join(allm)};\n", False)
     for slug, targets, sysm, new, ours in groups:
         mimes = sysm + ([ours] if ours else []) + (["inode/directory"] if slug == "folder" else [])
-        acts = [("convert", "Convert with Game Format Converter", "--start"), ("add", "Add to the Game Format Converter list", "")]
+        acts = [("convert", "Convert with Game Format Converter Enhanced", "--start"), ("add", "Add to the Game Format Converter Enhanced list", "")]
         acts += [("to-" + k.replace("_", "-"), linux_action_label(k), f"--start --to {k}") for k in targets]
         text = ("[Desktop Entry]\nType=Service\nX-KDE-ServiceTypes=KonqPopupMenu/Plugin\n"
-                f"MimeType={';'.join(mimes)};\nX-KDE-Submenu=Game Format Converter\nActions={';'.join(a[0] for a in acts)};\n")
+                f"MimeType={';'.join(mimes)};\nX-KDE-Submenu=Game Format Converter Enhanced\nActions={';'.join(a[0] for a in acts)};\n")
         for key, name, args in acts:
             text += f"\n[Desktop Action {key}]\nName={name}\nExec={ex} {args + ' ' if args else ''}%F\n"
         files[data / "kio" / "servicemenus" / f"chd-manager-{slug}.desktop"] = (text, True)
@@ -9870,7 +9871,7 @@ def linux_menu_files(prog=None, data=None, config=None):
 
 
 def thunar_entries(prog=None):
-    """Thunar's custom actions, in a submenu 'Game Format Converter': [(id, name, description, command, patterns, is_folder_action)].
+    """Thunar's custom actions, in a submenu 'Game Format Converter Enhanced': [(id, name, description, command, patterns, is_folder_action)].
     Thunar chooses by file name (a pattern) and by kind of file, so each conversion is offered exactly on the extensions the Windows menu offers it on."""
     prog = prog or linux_program()
     ex = " ".join('"%s"' % x for x in prog)
@@ -9879,12 +9880,12 @@ def thunar_entries(prog=None):
         for k in tg:
             by.setdefault(k, []).append(ext)
     allp = ";".join(_ext_variants(CTX_TARGETS, "*."))
-    out = [(UCA_PREFIX + "convert", "Convert with Game Format Converter", "Convert the selected files; the format is chosen in the window", f"{ex} --start %F", allp, False),
-           (UCA_PREFIX + "add", "Add to the Game Format Converter list", "Put the selected files in the window without converting yet", f"{ex} %F", allp, False)]
+    out = [(UCA_PREFIX + "convert", "Convert with Game Format Converter Enhanced", "Convert the selected files; the format is chosen in the window", f"{ex} --start %F", allp, False),
+           (UCA_PREFIX + "add", "Add to the Game Format Converter Enhanced list", "Put the selected files in the window without converting yet", f"{ex} %F", allp, False)]
     for k, exts in by.items():
         out.append((UCA_PREFIX + "to-" + k.replace("_", "-"), linux_action_label(k), "Convert the selected files and start", f"{ex} --start --to {k} %F", ";".join(_ext_variants(exts, "*.")), False))
     out += [(UCA_PREFIX + "convert-folder", CTX_TEXT[True][0], "Convert the folder; the format is chosen in the window", f"{ex} --start %F", "*", True),
-            (UCA_PREFIX + "add-folder", "Add this folder to the Game Format Converter list", "Put the folder in the window without converting yet", f"{ex} %F", "*", True)]
+            (UCA_PREFIX + "add-folder", "Add this folder to the Game Format Converter Enhanced list", "Put the folder in the window without converting yet", f"{ex} %F", "*", True)]
     out += [(UCA_PREFIX + "to-" + k + "-folder", linux_action_label(k) + " (this folder)", "Convert the folder and start", f"{ex} --start --to {k} %F", "*", True) for k in CTX_FOLDER]
     return out
 
@@ -10007,7 +10008,7 @@ def _uca_write(path, text, bom=False):
 
 
 def thunar_uca_install(config=None, prog=None):
-    """Put the 'Game Format Converter' submenu into Thunar's custom actions. Only our block is added (replacing an older copy of it): everything else in the file,
+    """Put the 'Game Format Converter Enhanced' submenu into Thunar's custom actions. Only our block is added (replacing an older copy of it): everything else in the file,
     the user's actions, comments and layout, stays byte for byte as it was."""
     path = thunar_uca_path(config)
     block = UCA_BEGIN + "\n" + "".join(_uca_xml(e) for e in thunar_entries(prog)) + UCA_END + "\n"
@@ -10053,10 +10054,12 @@ def _linux_refresh(data):
                 pass
 
 
-def _linux_stale(data, keep=()):
+def _linux_stale(data, keep=(), config=None):
     """Menu files an earlier version wrote that the current menu no longer has (the old Nautilus script names, the old single Dolphin file, groups that no longer exist)."""
     sm = data / "kio" / "servicemenus"
     stale = [data / "nautilus" / "scripts" / old for old in LINUX_OLD_SCRIPTS] + [sm / LINUX_OLD_MENU]
+    if config is not None:
+        stale += [Path(config) / "caja" / "scripts" / old for old in LINUX_OLD_SCRIPTS]       # Caja keeps its scripts in the config folder
     try:
         stale += [p for p in sm.glob("chd-manager-*.desktop")] + [p for p in (data / "nemo" / "actions").glob("chd-manager-*.nemo_action")]
     except OSError:
@@ -10069,7 +10072,7 @@ def linux_menu_install(data=None, prog=None, config=None, thunar=None):
     If Thunar's own actions file can't be read, everything else is still written and ValueError says so at the end."""
     d, cfg = _linux_dirs(data, config)
     files = linux_menu_files(prog, d, cfg)
-    for old in _linux_stale(d, keep=files):
+    for old in _linux_stale(d, keep=files, config=cfg):
         try:
             old.unlink()
         except OSError:
@@ -10088,7 +10091,7 @@ def linux_menu_install(data=None, prog=None, config=None, thunar=None):
 
 def linux_menu_remove(data=None, config=None):
     d, cfg = _linux_dirs(data, config)
-    for path in list(linux_menu_files(["x"], d, cfg)) + _linux_stale(d):
+    for path in list(linux_menu_files(["x"], d, cfg)) + _linux_stale(d, config=cfg):
         try:
             path.unlink()
         except OSError:
@@ -10113,8 +10116,8 @@ CTX_FOLDER = ("chd", "cue", "iso", "zar")                              # what a 
 CTX_EXTS = tuple(CTX_TARGETS)                                    # archives are left out on purpose: no menu on every zip
 CTX_BASE = r"Software\Classes\SystemFileAssociations"          # per user (HKCU): no administrator needed, doesn't change what a double-click opens
 CTX_DIR = r"Software\Classes\Directory"
-CTX_TEXT = {False: ("Convert with Game Format Converter", "Add to Game Format Converter", "Convert with Game Format Converter to"),
-            True: ("Convert this folder with Game Format Converter", "Add this folder to Game Format Converter", "Convert this folder with Game Format Converter to")}
+CTX_TEXT = {False: ("Convert with Game Format Converter Enhanced", "Add to Game Format Converter Enhanced", "Convert with Game Format Converter Enhanced to"),
+            True: ("Convert this folder with Game Format Converter Enhanced", "Add this folder to Game Format Converter Enhanced", "Convert this folder with Game Format Converter Enhanced to")}
 
 
 def ctx_program():
@@ -10152,7 +10155,7 @@ def ctx_menu_outdated(reg=None, base=CTX_BASE, dirbase=CTX_DIR, data=None, prog=
                 return False
             d, cfg = _linux_dirs(data, config)
             want = linux_menu_files(prog, d, cfg)
-            if any(p.exists() for p in _linux_stale(d, keep=want)):                              # an older layout (one Dolphin file for every type, the old script names)
+            if any(p.exists() for p in _linux_stale(d, keep=want, config=cfg)):                              # an older layout (one Dolphin file for every type, the old script names)
                 return True
             for path, (text, _x) in want.items():                                                # anything that differs: a file type added since, a file manager added since, or the program moved to another folder
                 try:
@@ -10178,7 +10181,7 @@ def ctx_menu_outdated(reg=None, base=CTX_BASE, dirbase=CTX_DIR, data=None, prog=
 
 
 def ctx_menu_install(reg=None, base=CTX_BASE, dirbase=CTX_DIR):
-    """Add 'Convert with Game Format Converter', 'Convert with Game Format Converter to' (a submenu of formats) and 'Add to Game Format Converter' to the
+    """Add 'Convert with Game Format Converter Enhanced', 'Convert with Game Format Converter Enhanced to' (a submenu of formats) and 'Add to Game Format Converter Enhanced' to the
     right-click menu of disc image files and folders (this user only)."""
     if reg is None and os.name != "nt":
         return linux_menu_install()
