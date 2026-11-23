@@ -1,6 +1,6 @@
-# Game Format Converter
+# Game Format Converter Enhanced
 
-> **This is an independent fork, maintained by [Xarishark](https://github.com/Xarishark).** It adds features and fixes of its own (see [What this fork adds](#what-this-fork-adds)); all changes in this fork are by Xarishark. It has no relation to the original project and is not endorsed by it, so please report problems with this fork [here](../../issues), not upstream. It is based on [Game Format Converter by Mr-Shizzy](https://github.com/Mr-Shizzy/Game-Format-Converter), used under the GPL; see [Credits and license](#credits-and-license).
+> **This is an independent fork, maintained by [Xarishark](https://github.com/Xarishark).** It is called **Game Format Converter Enhanced** so it isn't mistaken for the original program (the files and the .exe keep the original name, so existing installs and updates keep working). It adds features and fixes of its own (see [What this fork adds](#what-this-fork-adds)); all changes in this fork are by Xarishark. It has no relation to the original project and is not endorsed by it, so please report problems with this fork [here](../../issues), not upstream. It is based on [Game Format Converter by Mr-Shizzy](https://github.com/Mr-Shizzy/Game-Format-Converter), used under the GPL; see [Credits and license](#credits-and-license).
 
 **Formerly CHD Manager.** It was renamed in 2.1.0 because it now converts far more than CHDs. If you have an older CHD Manager, see [Coming from CHD Manager?](#coming-from-chd-manager).
 

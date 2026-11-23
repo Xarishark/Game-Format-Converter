@@ -38,7 +38,7 @@ from ctypes import wintypes
 from pathlib import Path
 from tkinter import filedialog, messagebox, ttk
 
-APP_NAME = "Game Format Converter"
+APP_NAME = "Game Format Converter Enhanced"          # this fork's name, so it isn't mistaken for the original; files, menus and the .exe keep the old name
 APP_VER = "2.1.1"
 FROZEN = getattr(sys, "frozen", False)          # True when running as the packaged .exe
 HERE = Path(sys.executable).resolve().parent if FROZEN else Path(__file__).resolve().parent
@@ -10517,7 +10517,7 @@ class App:
         self.more_menu.add_separator()
         self.more_menu.add_command(label="Copy a report for support", command=self.copy_report)
         self.more_menu.add_command(label="Show the log file", command=self.open_log_folder)
-        self.more_menu.add_command(label="About Game Format Converter…", command=lambda: self.open_settings("About"))
+        self.more_menu.add_command(label=f"About {APP_NAME}…", command=lambda: self.open_settings("About"))
 
         # ---- bottom, packed first so it always keeps its space: footer, then action bar, then the settings line
         foot = ttk.Frame(root, padding=(18, 0, 18, 10))
@@ -10639,7 +10639,7 @@ class App:
         # ---- settings live in their own window, not on the main screen
         sw = tk.Toplevel(root)
         sw.withdraw()
-        sw.title("Game Format Converter settings")
+        sw.title(f"{APP_NAME} settings")
         sw.transient(root)
         sw.minsize(700, 520)
         sw.protocol("WM_DELETE_WINDOW", sw.withdraw)
@@ -10890,7 +10890,7 @@ class App:
 
         # --- About
         f = tab("About")
-        ttk.Label(f, text=f"Game Format Converter {APP_VER}", font=("Segoe UI Semibold", 14)).grid(row=0, column=0, columnspan=4, sticky="w")
+        ttk.Label(f, text=f"{APP_NAME} {APP_VER}", font=("Segoe UI Semibold", 14)).grid(row=0, column=0, columnspan=4, sticky="w")
         lf = ttk.Frame(f)
         lf.grid(row=1, column=0, columnspan=4, sticky="w", pady=(4, 0))
         for i, (text, url) in enumerate((("GitHub page and downloads", f"https://github.com/{APP_REPO}"),
@@ -11044,7 +11044,7 @@ class App:
                                   extent=42, style="pieslice", fill=lerp_hex("#f4f6ff", base, 0.45), outline="")
                      for k in range(4)]
         c.create_oval(cx - 7, cy - 7, cx + 7, cy + 7, fill=base, outline="#ffffff", width=2)
-        c.create_text(76, 23, text="Game Format Converter", anchor="w", fill="#ffffff", font=("Segoe UI Semibold", 17))
+        c.create_text(76, 23, text=APP_NAME, anchor="w", fill="#ffffff", font=("Segoe UI Semibold", 17))
         c.create_text(78, 47, text="Convert game images and files between formats  ·  CD / DVD detected for you", anchor="w",
                       fill="#eef0ff", font=("Segoe UI", 9))
         label, col = {"idle": ("●  Ready", "#ffffff"), "run": ("●  Working…", "#fff1b8"),
@@ -11304,7 +11304,7 @@ class App:
     def footer_base(self, which):
         if which == "chdman":
             return f"chdman {self.chd_version}" if CHDMAN else "chdman not found"
-        return f"Game Format Converter {APP_VER}"
+        return f"{APP_NAME} {APP_VER}"
 
     def set_footer(self, which, note="", tone="muted", revert_after=0):
         """Each footer button shows its component and version; a short note (checking, up to date, update available)
@@ -15936,7 +15936,7 @@ class App:
             return getattr(self, "silent_choice", None) or ("now" if getattr(self, "silent_answer", True) else "later")
         result = {"v": "later"}
         win = tk.Toplevel(self.root)
-        win.title("Game Format Converter update")
+        win.title(f"{APP_NAME} update")
         win.configure(bg=self.t["bg"])
         win.transient(self.root)
         win.resizable(False, False)
