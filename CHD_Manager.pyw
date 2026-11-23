@@ -42,6 +42,25 @@ APP_NAME = "Game Format Converter Enhanced"          # this fork's name, so it i
 APP_VER = "2.1.1"
 FROZEN = getattr(sys, "frozen", False)          # True when running as the packaged .exe
 HERE = Path(sys.executable).resolve().parent if FROZEN else Path(__file__).resolve().parent
+BUNDLE = HERE                                   # where the program's own files are (the same as HERE, except in the AppImage)
+APPIMAGE = ""                                   # the .AppImage file this copy runs from, if it does
+
+
+def _appimage_home():
+    """Linux AppImage: the program's files sit in a read-only image, so HERE becomes the folder the .AppImage file is in (like the
+    Windows exe's folder: settings, keys, the log and downloads go there), or ~/.local/share/<name> when that folder can't be written."""
+    global HERE, APPIMAGE
+    img, root = os.environ.get("APPIMAGE", ""), os.environ.get("APPDIR", "")
+    if os.name == "nt" or FROZEN or not img or not root or not str(BUNDLE).startswith(str(Path(root).resolve()) + os.sep):
+        return
+    APPIMAGE = str(Path(img).resolve())
+    HERE = Path(APPIMAGE).parent
+    if not os.access(HERE, os.W_OK):
+        HERE = Path(os.environ.get("XDG_DATA_HOME") or (Path.home() / ".local" / "share")) / "game-format-converter-enhanced"
+        HERE.mkdir(parents=True, exist_ok=True)
+
+
+_appimage_home()
 SETTINGS_FILE = HERE / "chd_manager_settings.json"
 LOG_MAX = 1_000_000                 # the log file is started afresh (the old one kept once) when it passes this size
 
@@ -166,7 +185,7 @@ def fmt_time(sec):
 
 
 def find_chdman(saved=""):
-    for cand in (saved, str(HERE / "chdman.exe"), str(HERE / "chdman")):
+    for cand in (saved, str(HERE / "chdman.exe"), str(HERE / "chdman"), str(BUNDLE / "chdman")):     # (BUNDLE: the one inside the AppImage)
         if os.name != "nt" and cand.lower().endswith(".exe"):
             continue                       # a Windows program (say, left in a folder shared with Windows) can't work on Linux paths: use the system's chdman
         if cand and Path(cand).is_file():
@@ -580,15 +599,17 @@ def ver_tuple(s):
 
 def app_asset_kind():
     """Which download of a release fits this install: the Windows exe zip, or the program source (Linux, macOS, Windows-from-source)."""
-    return "win64" if (FROZEN or os.name == "nt") else "source"
+    return "win64" if (FROZEN or os.name == "nt") else "appimage" if APPIMAGE else "source"
 
 
 def parse_app_release(data, kind):
     """A GitHub 'latest release' answer -> dict(tag, name, url, size, sha, page, notes, kind). Only trusts github.com/<repo>/.
     win64: the first 64-hex text in the notes is the zip's SHA-256 (the convention every released updater already reads).
     source: the SHA-256 is on the line of the notes that names the source zip ('<hash>  Game-Format-Converter-x-source.zip').
+    appimage: the same, on the line that names the AppImage ('<hash>  Game-Format-Converter-Enhanced-x-x86_64.AppImage').
     A release without a source zip still parses (url is empty): the update can be announced, just not installed by itself."""
-    pat = r"(?:CHD-Manager|Game-Format-Converter)-.+-win64\.zip" if kind == "win64" else r"(?:CHD-Manager|Game-Format-Converter)-.+-source\.zip"
+    pat = {"win64": r"(?:CHD-Manager|Game-Format-Converter)-.+-win64\.zip", "appimage": r"Game-Format-Converter-.+-x86_64\.AppImage"}.get(
+        kind, r"(?:CHD-Manager|Game-Format-Converter)-.+-source\.zip")
     asset = next((a for a in data.get("assets", []) if re.fullmatch(pat, a["name"])), None)
     body = data.get("body") or ""
     if kind == "win64":
@@ -776,6 +797,60 @@ def install_source_update(files, dest_dir):
                 tmp.unlink()
             except OSError:
                 pass
+        raise
+
+
+# ---- updating the Linux AppImage: download the new .AppImage beside the old one, test-run it, swap it in, restart
+APPIMAGE_MAX = 400 << 20
+
+
+def fetch_appimage_update(info, dest, progress=None, opener=None):
+    """Download the release's AppImage to '<dest>.new' and check its size, SHA-256 and that it is a Linux program; returns that path.
+    Refuses an address outside github.com/<repo>/ and a release without a published checksum."""
+    opener = opener or http_get
+    if not info.get("url", "").startswith(APP_OWNER_PREFIX):
+        raise RuntimeError("Unexpected download address.")
+    if not info.get("sha"):
+        raise RuntimeError("This release has no published checksum, so it can't be verified. Download it by hand.")
+    new = Path(str(dest) + ".new")
+    h, got, cap = hashlib.sha256(), 0, min(APPIMAGE_MAX, max(int(info.get("size") or 0), 1) + (1 << 20))
+    try:
+        with opener(info["url"], 60) as r, open(new, "wb") as f:
+            while True:
+                chunk = r.read(1 << 20)
+                if not chunk:
+                    break
+                got += len(chunk)
+                if got > cap:
+                    raise RuntimeError("The download is bigger than the release says, so it was discarded.")
+                f.write(chunk)
+                h.update(chunk)
+                if progress:
+                    progress(100 * got / max(info.get("size") or 1, 1), f"Downloading {info['name']}: {fmt_size(got)} / {fmt_size(info.get('size') or 0)}")
+        if h.hexdigest().lower() != info["sha"].lower():
+            raise RuntimeError("Checksum mismatch - the download was discarded.")
+        with open(new, "rb") as f:
+            if f.read(4) != b"\x7fELF":
+                raise RuntimeError("The download is not a Linux program, so it was discarded.")
+        os.chmod(new, 0o755)
+        return new
+    except BaseException:
+        try:
+            new.unlink()
+        except OSError:
+            pass
+        raise
+
+
+def install_appimage_update(new, dest):
+    """Put the tested AppImage in place of the old one, under the same name (so menus and shortcuts keep working). The old one is kept as '<name>.previous'."""
+    dest = Path(dest)
+    prev = dest.with_name(dest.name + ".previous")
+    os.replace(dest, prev)
+    try:
+        os.replace(new, dest)
+    except OSError:
+        os.replace(prev, dest)
         raise
 
 
@@ -4211,8 +4286,7 @@ _GAMEDB = {}
 
 
 def find_gamedb():
-    p = HERE / GAMEDB_FILE[0]
-    return p if p.is_file() else None
+    return next((p for p in (HERE / GAMEDB_FILE[0], BUNDLE / GAMEDB_FILE[0]) if p.is_file()), None)
 
 
 def load_gamedb(path):
@@ -9783,7 +9857,9 @@ def linux_data_home():
 
 
 def linux_program():
-    """[the command that starts this program] as a list: the launcher script next to it, or python + this script."""
+    """[the command that starts this program] as a list: the AppImage, the launcher script next to it, or python + this script."""
+    if APPIMAGE:
+        return [APPIMAGE]                          # not the files inside it: the image is mounted somewhere new every time it starts
     here = Path(__file__).resolve()
     sh = here.with_name("chd-manager.sh")
     return [str(sh)] if sh.is_file() else [sys.executable, str(here)]
@@ -16011,8 +16087,15 @@ class App:
                    f"Update now? It downloads {info['name']} ({fmt_size(info['size'])}) from github.com/{APP_REPO}, "
                    "checks its SHA-256, test-runs the new version, then replaces the program files in this folder and restarts. "
                    f"The old files are kept in a '{SOURCE_BACKUP}' folder. Your settings, keys and chdman are not touched.")
+        elif APPIMAGE and info.get("kind") == "appimage" and info.get("url") and os.access(Path(APPIMAGE).parent, os.W_OK):
+            mode = "appimage"
+            msg = (f"Game Format Converter Enhanced {new_v} is available (you have {APP_VER}).\n\n{notes}\n\n"
+                   f"Update now? It downloads {info['name']} ({fmt_size(info['size'])}) from github.com/{APP_REPO}, "
+                   "checks its SHA-256, test-runs it, then puts it in place of this AppImage (same file name) and restarts. "
+                   f"The old one is kept as '{Path(APPIMAGE).name}.previous'. Your settings and keys are not touched.")
         else:
-            why = ("This release has no download for this kind of install." if can_self_update_source() and not info.get("url")
+            why = ("This release has no download for this kind of install." if (can_self_update_source() or APPIMAGE) and not info.get("url")
+                   else "The folder this AppImage is in can't be written to." if APPIMAGE
                    else "This copy's folder can't be written to." if can_self_update_source() and not os.access(HERE, os.W_OK)
                    else "You're running the script version, so it can't replace itself.")
             msg = (f"Game Format Converter Enhanced {new_v} is available (you have {APP_VER}).\n\n{notes}\n\n"
@@ -16028,7 +16111,8 @@ class App:
                 return
             self.app_upd_btn.config(state="disabled")
             self.app_btn.config(state="disabled")
-            threading.Thread(target=self.app_update_worker if mode == "exe" else self.source_update_worker, args=(info,), daemon=True).start()
+            worker = {"exe": self.app_update_worker, "appimage": self.appimage_update_worker}.get(mode, self.source_update_worker)
+            threading.Thread(target=worker, args=(info,), daemon=True).start()
         # "later": nothing recorded, so it asks again next launch
 
     def app_update_worker(self, info):
@@ -16081,6 +16165,33 @@ class App:
             if stage:
                 shutil.rmtree(stage, ignore_errors=True)
 
+    def appimage_update_worker(self, info):
+        """Linux AppImage: download and verify the new AppImage, test-run it, swap it in under the same name, ask for a restart."""
+        new, report_dir = None, None
+        try:
+            new = fetch_appimage_update(info, APPIMAGE, lambda pct, txt: self.post("upd_progress", pct, txt))
+            self.post("upd_progress", 100, "Testing the new version…")
+            report_dir = Path(tempfile.mkdtemp(prefix="chdm_selfcheck_"))
+            report = report_dir / "report.json"
+            run_capture([str(new), "--smoke", str(report)], timeout=180)
+            r = json.loads(report.read_text("utf-8")) if report.exists() else {}
+            if r.get("status") != "Done" or ver_tuple(r.get("app_version", "")) != ver_tuple(info["tag"]):
+                raise RuntimeError("The downloaded version failed its self-test, so it was not installed. "
+                                   + (r.get("error", "") or f"(status: {r.get('status')}, version: {r.get('app_version')})").strip()[-400:])
+            install_appimage_update(new, APPIMAGE)
+            new = None
+            self.post("app_upd_restart")
+        except Exception as e:  # noqa: BLE001
+            self.post("app_upd_done", False, str(e))
+        finally:
+            if new:
+                try:
+                    Path(new).unlink()
+                except OSError:
+                    pass
+            if report_dir:
+                shutil.rmtree(report_dir, ignore_errors=True)
+
     def on_app_update_restart(self):
         """The new files are in place: start the program again from them (the same process is replaced, so there is one window)."""
         self.status.config(text="Restarting into the new version…")
@@ -16091,6 +16202,8 @@ class App:
         self.save_settings()
         self.drop_all_arcs()
         try:
+            if APPIMAGE:
+                os.execv(APPIMAGE, [APPIMAGE])
             os.execv(sys.executable, [sys.executable, str(HERE / "CHD_Manager.pyw")])
         except OSError as e:
             self.app_upd_btn.config(state="normal")

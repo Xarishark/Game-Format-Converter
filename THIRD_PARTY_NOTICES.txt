@@ -5,7 +5,8 @@ License, version 3 or (at your option) any later version (see LICENSE). That cho
 follows from the GameCube/Wii code below, which is a Python port of GPL-licensed code.
 The release build of Game Format Converter Enhanced.exe and the chdman.exe and gameInfo.db that ship
 with it contain or consist of third-party software. Their licenses are reproduced below,
-as those licenses require.
+as those licenses require. The Linux AppImage contains the same chdman (built from MAME's
+source), Python and zstandard, and the few more parts listed in the last section.
 
 
 ==============================================================================
@@ -1349,3 +1350,65 @@ signatures are included, and nothing is decrypted.
 Nothing from Nintendo, Sony, Microsoft or Sega is included: no keys, no certificates,
 no firmware, no BIOS files and no game data. The CIA files this program writes have
 an empty certificate area and unsigned (zeroed) signatures, on purpose.
+
+
+==============================================================================
+Linux AppImage  (Game-Format-Converter-Enhanced-<version>-x86_64.AppImage)
+==============================================================================
+
+The AppImage holds, besides the program:
+
+  chdman            built from MAME mame0289's source code (https://github.com/mamedev/mame,
+                    tag mame0289); license as in section 1.
+  Python 3.14       from python-build-standalone (https://github.com/astral-sh/
+                    python-build-standalone); license as in section 2.
+  zstandard         the Python package; license as in its section above.
+  Tcl/Tk 8.6        from Ubuntu 22.04 (libtcl8.6, libtk8.6), so the window can use
+                    the desktop's fonts; Tcl/Tk license (BSD-style), as in section 3.
+  libXft, libXss,   from Ubuntu 22.04 (X.Org, MIT/X11-style licenses).
+  libXrender
+  gameInfo.db       from the PSXPackager project (MIT), as in the Windows zip.
+  AppImage runtime  the small program at the start of the file that opens it
+                    (https://github.com/AppImage/type2-runtime), MIT license below.
+
+Each one's full license or copyright file is inside the AppImage under
+usr/share/doc/ (run the AppImage with --appimage-extract to see them).
+
+AppImage type2-runtime license:
+
+MIT License
+
+Copyright (c) 2004-23 probonopd
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+The AppImage runtime executable contains statically linked code from
+the following third party libraries, which are licensed under
+the following terms:
+
+* musl libc, licensed under the terms of
+  https://git.musl-libc.org/cgit/musl/tree/COPYRIGHT
+* libfuse, licensed under the terms of
+  https://github.com/libfuse/libfuse/blob/master/LGPL2.txt
+* squashfuse, licensed under the terms of
+  https://github.com/vasi/squashfuse/blob/master/LICENSE
+* libzstd, licensed under the terms of
+  https://github.com/facebook/zstd/blob/dev/LICENSE
+* zlib, licensed under the terms of
+  https://zlib.net/zlib_license.html
