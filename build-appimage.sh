@@ -7,6 +7,7 @@
 # The build runs inside Ubuntu 22.04, so the AppImage runs on Linux from 2022 on (glibc 2.35 or newer).
 # Every download is checked against the SHA-256 below; build/appimage-cache keeps them (and the chdman build) for next time.
 # ./build-appimage.sh --inside runs the build steps directly (what the container does; needs Ubuntu 22.04 or alike, as root).
+# UBUNTU_MIRROR=http://mirrors.edge.kernel.org/ubuntu ./build-appimage.sh   uses another Ubuntu mirror when the main one is slow.
 set -eu
 
 MAME_TAG=mame0289
@@ -34,7 +35,7 @@ root=$(cd "$(dirname "$0")" && pwd)
 if [ "${1:-}" != "--inside" ]; then
     engine=$(command -v podman || command -v docker || true)
     [ -n "$engine" ] || { echo "Needs podman or docker (or run '$0 --inside' on Ubuntu 22.04 as root)." >&2; exit 1; }
-    exec "$engine" run --rm -v "$root:/src:Z" "$IMAGE" sh /src/build-appimage.sh --inside
+    exec "$engine" run --rm -e UBUNTU_MIRROR="${UBUNTU_MIRROR:-}" -v "$root:/src:Z" "$IMAGE" sh /src/build-appimage.sh --inside
 fi
 
 cache=$root/build/appimage-cache
@@ -44,6 +45,9 @@ mkdir -p "$cache" "$root/dist"
 echo "== Build tools"
 export DEBIAN_FRONTEND=noninteractive
 printf 'Acquire::http::Timeout "30";\nAcquire::Retries "5";\n' > /etc/apt/apt.conf.d/99gfc-retries    # a stalled mirror is retried, not waited on forever
+if [ -n "${UBUNTU_MIRROR:-}" ]; then      # e.g. UBUNTU_MIRROR=http://mirrors.edge.kernel.org/ubuntu when archive.ubuntu.com is slow
+    sed -i "s#http://archive.ubuntu.com/ubuntu#$UBUNTU_MIRROR#; s#http://security.ubuntu.com/ubuntu#$UBUNTU_MIRROR#" /etc/apt/sources.list
+fi
 apt-get update -qq
 apt-get install -y -qq --no-install-recommends build-essential python3 curl ca-certificates file icoutils \
     pkg-config libsdl2-dev libfontconfig-dev tk8.6-dev libxss1 >/dev/null 2>&1   # (MAME's project generator asks for SDL even when only its tools are built)
